@@ -1,6 +1,6 @@
 ---
 title: "Assignment 1: Introduction"
-author: "Student Name"
+author: "Erchi Luo"
 output: pdf_document
 ---
 
@@ -24,23 +24,23 @@ Enter answers to the questions just below the >Answer: prompt.
 
 1. What are your previous experiences with data analytics, R, and Git? Include both formal and informal training.
 
-> Answer: 
+> Answer: My undergraduate studies was major in finance, I took a selctive course called Econometrics. In that class I did some R training through following the model given by the professor.
 
 2. Are there any components of the course about which you feel confident?
 
-> Answer: 
+> Answer: I am the kind of person who is good at SOP tasks. Thus, I think I can develop skills to integrate software applications like R swiftly by following the professor's instructions.
 
 3. Are there any components of the course about which you feel apprehensive?
 
-> Answer: 
+> Answer: Well, I'm a little worry about my laptop.It might have some minor glitches that could cause instability or errors when I run R. However, I have an alternative solution: I can use the computers in the school's computer lab to complete my assignments.
 
 4. Describe a dataset you have used in the past. Explain whether it was a primary or secondary dataset. 
 
-> Answer:
+> Answer: I used to intern at a carbon management tech company where I handled the task of carbon accounting for an organization or a product.In this process, we need to collect and calculate the carbon emission data of the surveyed subjects.Thus, I think it was a primary dataset.
 
 5. Would you describe the day of the month as a nominal, ordinal, interval, or ratio number? Explain your reasoning.
 
-> Answer: 
+> Answer: The day of the month is an interval number. This is because the days have a fixed order and equal intervals (each day represents a consistent unit), but there is no true zero point (day 0 doesn't exist, and the starting point of the month is arbitrary).
 
 ---
 
@@ -48,7 +48,7 @@ Enter answers to the questions just below the >Answer: prompt.
 
 Provide a link below to your forked course repository in GitHub. Make sure you have pulled all recent changes from the course repository and that you have updated your course README file, committed those changes, and pushed them to your GitHub account. 
 
-> Answer: 
+> Answer: https://github.com/luoerchi-maker/EDE_Spring2026
 
 ---
 
