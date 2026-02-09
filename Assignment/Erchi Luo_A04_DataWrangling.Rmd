@@ -1,6 +1,6 @@
 ---
 title: "Assignment 4: Data Wrangling (Spring 2026)"
-author: "Student Name"
+author: "Erchi Luo"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -35,13 +35,21 @@ Do not use any AI tools in completing this assignment.
 
 ```{r setup, message = FALSE}
 #1a 
-
-#1b 
-
-#1c 
-
-#2 
-
+library(tidyverse)
+library(here)
+#1b Check working directory
+getwd()
+here()
+#1c Read in raw data
+EPAair_O3_2018 <- read.csv(here("Data/Raw/EPAair_O3_NC2018_raw.csv"), stringsAsFactors = TRUE)
+EPAair_O3_2019 <- read.csv(here("Data/Raw/EPAair_O3_NC2019_raw.csv"), stringsAsFactors = TRUE)
+EPAair_PM25_2018 <- read.csv(here("Data/Raw/EPAair_PM25_NC2018_raw.csv"), stringsAsFactors = TRUE)
+EPAair_PM25_2019 <- read.csv(here("Data/Raw/EPAair_PM25_NC2019_raw.csv"), stringsAsFactors = TRUE)
+#2 Reveal the dimensions of the four datasets
+dim(EPAair_O3_2018)
+dim(EPAair_O3_2019)
+dim(EPAair_PM25_2018)
+dim(EPAair_PM25_2019)
 
 ```
 
@@ -61,13 +69,40 @@ Do not use any AI tools in completing this assignment.
 
 ```{r questions 3 thru 4}
 #3
-
+EPAair_O3_2018$Date <- mdy(EPAair_O3_2018$Date)
+EPAair_O3_2019$Date <- mdy(EPAair_O3_2019$Date)
+EPAair_PM25_2018$Date <- mdy(EPAair_PM25_2018$Date)
+EPAair_PM25_2019$Date <- mdy(EPAair_PM25_2019$Date)
 #4
+O3_2018_subset <- EPAair_O3_2018 %>%
+  select(Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 
-#5
+O3_2019_subset <- EPAair_O3_2019 %>%
+  select(Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 
+PM25_2018_subset <- EPAair_PM25_2018 %>%
+  select(Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+
+PM25_2019_subset <- EPAair_PM25_2019 %>%
+  select(Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+#5 Fill all cells in AQS_PARAMETER_DESC with "PM2.5"
+PM25_2018_subset <- PM25_2018_subset %>%
+  mutate(AQS_PARAMETER_DESC = "PM2.5")
+
+PM25_2019_subset <- PM25_2019_subset %>%
+  mutate(AQS_PARAMETER_DESC = "PM2.5")
 #6
+write.csv(O3_2018_subset, row.names = FALSE, 
+          here("Data/Processed/EPAair_O3_NC2018_processed.csv"))
 
+write.csv(O3_2019_subset, row.names = FALSE, 
+          here("Data/Processed/EPAair_O3_NC2019_processed.csv"))
+
+write.csv(PM25_2018_subset, row.names = FALSE, 
+          here("Data/Processed/EPAair_PM25_NC2018_processed.csv"))
+
+write.csv(PM25_2019_subset, row.names = FALSE, 
+          here("Data/Processed/EPAair_PM25_NC2019_processed.csv"))
 
 ```
 
@@ -99,17 +134,38 @@ Do not use any AI tools in completing this assignment.
 12. Save your processed dataset with the following file name: "EPAair_O3_PM25_NC1819_Processed.csv"
 
 ```{r questions 7 thru 12}
-#7 
+#7 Combine the four datasets using rbind
+EPAair_combined <- rbind(O3_2018_subset, O3_2019_subset, PM25_2018_subset, PM25_2019_subset)
+#8 Display dimensions of the combined dataset
+dim(EPAair_combined)
+#9 Wrangle with pipe function
+EPAair_processed <- EPAair_combined %>%
+  # Filter for the specified 13 sites.
+  filter(Site.Name %in% c("Linville Falls", "Durham Armory", "Leggett", 
+                         "Hattie Avenue", "Clemmons Middle", "Mendenhall School", 
+                         "Frying Pan Mountain", "West Johnston Co.", 
+                         "Garinger High School", "Castle Hayne", 
+                         "Pitt Agri. Center", "Bryson City", "Millbrook School")) %>%
+  # Split-Apply-Combine
+  group_by(Date, Site.Name, AQS_PARAMETER_DESC, COUNTY) %>%
+  summarise(mean_AQI = mean(DAILY_AQI_VALUE),
+            mean_Lat = mean(SITE_LATITUDE),
+            mean_Lon = mean(SITE_LONGITUDE)) %>%
+  # Add month and year columns
+  mutate(Month = month(Date),
+         Year = year(Date))
 
-#8 
-
-#9
-
-#10
-
-#11
-
-#12
+# Check if the dimensions are 14,752 x 9
+dim(EPAair_processed)
+#10 Spread the dataset so Ozone and PM2.5 AQI are in separate columns
+EPAair_tidy <- EPAair_processed %>%
+  pivot_wider(names_from = AQS_PARAMETER_DESC, 
+              values_from = mean_AQI)
+#11 Call up the dimensions of the tidy dataset
+dim(EPAair_tidy)
+#12 Save the final processed dataset to the Processed folder
+write.csv(EPAair_tidy, row.names = FALSE, 
+          here("Data/Processed/EPAair_O3_PM25_NC1819_Processed.csv"))
 
 
 ```
@@ -123,16 +179,23 @@ Do not use any AI tools in completing this assignment.
 
 ```{r questions 13 and 14}
 
-#13
-
-#14
-
+#13 Create a summary dataset by site, month, and year
+EPAair_summary <- EPAair_tidy %>%
+  group_by(Site.Name, Year, Month) %>%
+  summarise(
+    mean_AQI_Ozone = mean(Ozone, na.rm = TRUE),
+    mean_AQI_PM25 = mean(`PM2.5`, na.rm = TRUE)
+  ) %>%
+  drop_na(mean_AQI_Ozone)
+head(EPAair_summary)
+#14 Display the dimensions
+dim(EPAair_summary)
 
 ```
 
 15. Why did we use the function `drop_na` rather than `na.omit`? Hint: replace `drop_na` with `na.omit` in part 13 and observe what happens with the dimensions of the summary date frame.
 
-> Answer: 
+> Answer: We used drop_na because it allows us to target a specific variable (mean_AQI_Ozone) while keeping rows that might have missing values in other columns (like mean_AQI_PM25). Using na.omit would result in a smaller dataset because it removes any row with at least one missing value across all columns, which would unnecessarily delete useful PM2.5 data where Ozone is present.
 
 16. Stage, commit, and push your Assignment to your GitHub account. Provide a link to your repository below.
 
