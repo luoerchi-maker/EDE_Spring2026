@@ -3,6 +3,7 @@ title: "Assignment 8: GLMs (Linear Regressios, ANOVA, & t-tests)"
 author: "Erchi Luo"
 date: "Spring 2026"
 output: pdf_document
+latex_engine: xelatex
 geometry: margin=2.54cm
 editor_options: 
   chunk_output_type: console
@@ -71,9 +72,8 @@ Our first research question is: Does mean lake temperature recorded during July 
 
 3. State the null and alternative hypotheses for this question:
 > Answer:
-H0: There is no significant relationship between lake depth and mean lake temperature in July. (The slope of the regression line is equal to zero, β1=0).
-Ha: There is a significant relationship between lake depth and mean lake temperature in July. (The slope of the regression line is not equal to zero, β1≠1).
-
+H0: There is no significant relationship between lake depth and mean lake temperature in July. 
+Ha: There is a significant relationship between lake depth and mean lake temperature in July. 
 
 4.  Wrangle your NTL-LTER dataset with a pipe function so that the records meet the following criteria: 
  * Only dates in July. 
