@@ -122,7 +122,7 @@ ggplot(GaringerOzone, aes(x = Date, y = Daily.Max.8.hour.Ozone.Concentration)) +
 
 ```
 
->Answer:The line plot exhibits a very strong and consistent seasonal cycle， and the red smoothed line shows a slight downward trend over the 2010–2019 period.
+>Answer:The line plot exhibits a very strong and consistent seasonal cycle, and the red smoothed line shows a slight downward trend over the 2010–2019 period.
 
 ## Time Series Analysis
 
